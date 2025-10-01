@@ -1,5 +1,56 @@
-<html>
-  <body>
-    <h1>Welcome to Chirpy</h1>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chirpy</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #333;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #1e3c72;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    p {
+      font-size: 1.5rem;
+      color: #555;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 25px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #1e3c72;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #3a5f99;
+    }
+  </style>
+</head>
+<body>
+  <img src="/app/assets/logo.png" alt="Chirpy logo" width="128" height="128">
+  <h1>Welcome to Chirpy</h1>
+  <p>Your microblogging backend API Platform!</p>
+  
+</body>
 </html>

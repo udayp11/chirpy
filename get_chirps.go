@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"sort"
 
 	"github.com/google/uuid"
 )
@@ -31,12 +32,28 @@ func (cfg *apiConfig) handlerGetChirp(w http.ResponseWriter, r *http.Request) {
 
 func (cfg *apiConfig) handlerGetChirps(w http.ResponseWriter, r *http.Request) {
 
+	s := r.URL.Query().Get("author_id")
+	// s is a string that contains the value of the author_id query parameter
+	// if it exists, or an empty string if it doesn't
+
 	dbchirps, err := cfg.db.GetChirps(r.Context())
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get chirps from Database", err)
 		return
 	}
 
+	if s != "" {
+		dbchirps, err = cfg.db.GetChirpsByAuthor(r.Context(), uuid.MustParse(s))
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "Couldn't get chirps from Database", err)
+			return
+		}
+
+	}
+	q := r.URL.Query().Get("sort")
+	if q == "desc" {
+		sort.Slice(dbchirps, func(i, j int) bool { return dbchirps[i].CreatedAt.After(dbchirps[j].CreatedAt) })
+	}
 	response := []Chirp{}
 
 	for _, chirp := range dbchirps {
