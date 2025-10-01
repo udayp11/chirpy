@@ -90,71 +90,67 @@ go build -o chirpy
 
 ## 🧪 API Overview
 
-### Users
+### Authentication
 
-| Method | Endpoint        | Auth | Body | Response |
-|--------|----------------|------|------|----------|
-| POST   | `/api/users`    | ❌    | `{"email": string, "password": string}` | `201 Created` → `{"id": ..., "email": ...}` |
-| PUT    | `/api/users`    | ✅    | `{"email": string, "password": string}` | `200 OK` → updated user object |
-| POST   | `/api/login`    | ❌    | `{"email": string, "password": string}` | `200 OK` → `{"token": "ACCESS_TOKEN", "refresh_token": "...", "email": "..."}` |
+| Method | Endpoint        | Auth Required | Body | Response |
+|--------|-----------------|---------------|------|----------|
+| POST   | `/api/login`    | ❌             | `{"email": string, "password": string}` | `200 OK` → `{"token": "ACCESS_TOKEN", "refresh_token": "REFRESH_TOKEN", "email": "user@example.com"}` |
+| POST   | `/api/refresh`  | ✅             | `{"refresh_token": string}` | `200 OK` → `{"token": "NEW_ACCESS_TOKEN"}` |
 
 ---
 
-### Tokens
+### Users
 
-| Method | Endpoint       | Auth | Body | Response |
-|--------|----------------|------|------|----------|
-| POST   | `/api/refresh` | ❌    | `{"refresh_token": string}` | `200 OK` → `{"token": "NEW_ACCESS_TOKEN"}` |
-| POST   | `/api/revoke`  | ✅    | `{"refresh_token": string}` | `204 No Content` |
+| Method | Endpoint        | Auth Required | Body | Response |
+|--------|-----------------|---------------|------|----------|
+| POST   | `/api/users`    | ❌             | `{"email": string, "password": string}` | `201 Created` → `{"id": 1, "email": "user@example.com"}` |
+| PUT    | `/api/users`    | ✅             | `{"email": string, "password": string}` | `200 OK` → `{"id": 1, "email": "newemail@example.com"}` |
 
 ---
 
 ### Chirps
 
-| Method | Endpoint                  | Auth | Body | Response |
-|--------|---------------------------|------|------|----------|
-| POST   | `/api/chirps`             | ✅    | `{"body": string}` | `201 Created` → chirp object |
-| GET    | `/api/chirps`             | ❌    | optional query: `author_id` | `200 OK` → `[chirp, ...]` sorted by `created_at` ascending |
-| GET    | `/api/chirps/{chirpID}`   | ❌    | — | `200 OK` → single chirp object |
-| POST   | `/api/validate_chirp`     | ✅    | `{"body": string}` | Validation result |
-| DELETE | `/api/chirps/{chirpID}`   | ✅    | — | `204 No Content` (owner-only) |
-
-> ⚠️ Note: `{chirpID}` is a path parameter. If you are using `http.ServeMux`, your handler needs to manually parse the URL path to extract the ID.
+| Method | Endpoint                  | Auth Required | Body | Response |
+|--------|---------------------------|---------------|------|----------|
+| POST   | `/api/chirps`             | ✅             | `{"body": string}` | `201 Created` → `{"id": 1, "body": "chirp content", "created_at": "Time"}` |
+| GET    | `/api/chirps`             | ❌             | Optional query: `author_id` | `200 OK` → `[{"id": 1, "body": "chirp content", "created_at": "Time"}]` |
+| GET    | `/api/chirps/{chirpID}`   | ❌             | — | `200 OK` → `{"id": 1, "body": "chirp content", "created_at": "Time"}` |
+| DELETE | `/api/chirps/{chirpID}`   | ✅             | — | `204 No Content` |
 
 ---
 
-### Admin / Ops
+### Chirp Validation
 
-| Method | Endpoint       | Auth | Body | Response |
-|--------|----------------|------|------|----------|
-| POST   | `/admin/reset` | ✅    | —    | Resets database (dev only) |
-| GET    | `/admin/metrics` | ❌ | —    | Metrics endpoint |
+| Method | Endpoint                  | Auth Required | Body | Response |
+|--------|---------------------------|---------------|------|----------|
+| POST   | `/api/validate_chirp`     | ❌             | `{"body": string}` | `200 OK` → `{"valid": true, "cleaned_body": "cleaned chirp content"}` |
+
+---
+
+### Admin / Operations
+
+| Method | Endpoint       | Auth Required | Body | Response |
+|--------|----------------|---------------|------|----------|
+| POST   | `/admin/reset` | ✅             | —    | Resets the database (dev only) |
+| GET    | `/admin/metrics` | ❌           | —    | Metrics endpoint |
 
 ---
 
 ### Health Check
 
-| Method | Endpoint        | Auth | Response |
-|--------|----------------|------|----------|
-| GET    | `/api/healthz` | ❌    | `200 OK` → `{"status":"ok"}` |
-
-> Optional: Add `/readiness` if you want a separate readiness probe.
+| Method | Endpoint        | Auth Required | Body | Response |
+|--------|-----------------|---------------|------|----------|
+| GET    | `/api/healthz`  | ❌             | —    | `200 OK` → `{"status": "ok"}` |
 
 ---
 
 ### Webhooks
 
-| Method | Endpoint             | Auth | Body | Response |
-|--------|--------------------|------|------|----------|
-| POST   | `/api/polka/webhooks` | ❌  | Implementation-specific | — |
+| Method | Endpoint             | Auth Required | Body | Response |
+|--------|----------------------|---------------|------|----------|
+| POST   | `/api/polka/webhooks` | ❌           | Implementation-specific | — |
 
 ---
-
-### Static Files
-
-| Endpoint | Description |
-|----------|-------------|
-| `/app/`  | Serves static frontend files from `filerootpath` |
 
 
 ## Contributing
