@@ -39,8 +39,13 @@ Set environment variables:
 
 ### Clone the repo
 ```bash
+# Clone the repository
 git clone https://github.com/udayp11/chirpy.git
 cd chirpy 
+
+# Build the binary
+go build -o chirpy
+
 ```
 
 ### Run database migrations
@@ -55,7 +60,12 @@ sqlc generate
 ```
 ### Start the server
 ```bash
-go run .
+# Build the binary
+go build -o chirpy
+
+#Start server
+./chirpy
+
 ```
 The server will start (default :8080) and expose REST API endpoints.
 
